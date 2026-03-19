@@ -1,22 +1,35 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-from PIL import Image # Nuova importazione per gestire le immagini
-import os # Utile per verificare se il file esiste
+import os
 
-ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png" #cambia ad icona locale
-IMAGE_PATH = "img/" # Cartella dove tieni le foto E i topos PNG
-TOPO_PATH = "topos/" # Cartella dove tieni i topos PNG
+# --- CONFIGURAZIONE E COSTANTI ---
+ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png"
+IMAGE_PATH = "img/" 
 GRADES = ['3', '4', '5A', '5B', '5C', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A']
 PALETTE = [
-    [0, 255, 0, 160],
-    [255, 0, 0, 160],
-    [0, 0, 255, 160],
-    [255, 255, 0, 160],
-    [255, 0, 255, 160],
-    [0, 255, 255, 160],
-    [255, 128, 0, 160],
+    [0, 255, 0, 160], [255, 0, 0, 160], [0, 0, 255, 160],
+    [255, 255, 0, 160], [255, 0, 255, 160], [0, 255, 255, 160], [255, 128, 0, 160],
 ]
+
+# --- CARICAMENTO DATI ---
+@st.cache_data
+def load_data():
+    parks = pd.read_csv("parcheggi.csv")
+    blocks = pd.read_csv("blocchi.csv")
+    # Assegnazione colori ai settori
+    settori_list = sorted(blocks["settore"].unique())
+    settori_list = ["Tutti"] + settori_list # Aggiungiamo "Tutti" come prima opzione
+    color_map = {s: PALETTE[i % len(PALETTE)] for i, s in enumerate(settori_list)}
+    blocks['color'] = blocks['settore'].map(color_map)
+    grade_to_int = {grade: i for i, grade in enumerate(GRADES)}
+    blocks['grade_rank'] = blocks['grado'].map(grade_to_int)
+    # Calco il grado minimo e massimo assoluto per i blocchi, così da poter impostare i valori di default dello slider
+    min_grade = blocks['grade_rank'].min()
+    max_grade = blocks['grade_rank'].max()
+    return parks, blocks, settori_list, grade_to_int, min_grade, max_grade
+
+parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade = load_data()
 
 st.title("Sugano Boulder")
 
@@ -25,12 +38,6 @@ with col1:
     show_parks = st.checkbox("Mostra parcheggi", value=True)
 with col2:
     show_blocks = st.checkbox("Mostra blocchi", value=True)
-
-parcheggi = pd.read_csv("parcheggi.csv")
-boulder_data = pd.read_csv("blocchi.csv")
-settori = boulder_data["settore"].unique()
-
-boulder_data['color'] = boulder_data['settore'].map({settore: color for i, (settore, color) in enumerate(zip(settori, PALETTE))})
 
 icon_data = {
     "url": ICON_URL,
@@ -50,7 +57,7 @@ icon_layer = pdk.Layer(
     get_size=4,
     size_scale=5,
     get_position=["lon", "lat"],
-    pickable=True, #Aggiungi link maps on click
+    pickable=False, #Aggiungi link maps on click
 )
 
 block_layer = pdk.Layer(
@@ -93,19 +100,19 @@ st.pydeck_chart(deck)
 
 # Selezione Settore
 st.header(f"Lista dei blocchi")
-selected_sector = st.selectbox("Scegli un settore", options=settori)
+selected_sector = st.selectbox("Scegli un settore", options=settori, index=0) # "Tutti" è l'opzione di default
 
 # Interfaccia filtri
 col1, col2 = st.columns([2, 3]) # Organizziamo i filtri su due colonne
 with col1:
-    filtraggio = st.checkbox("Filtra")
+    filtraggio = st.checkbox("Attiva filtri avanzati")
 
 if filtraggio:
     with col2:
         range_gradi = st.select_slider(
             "Seleziona range difficoltà",
-            options=GRADES,
-            value=('3', '9A')
+            options=GRADES[min_grade:max_grade+1], # +1 perché l'endpoint è esclusivo
+            value=(GRADES[min_grade], GRADES[max_grade])
         )
         boulder_tags = st.multiselect(
             "Seleziona tag",
@@ -113,19 +120,19 @@ if filtraggio:
         )
 else:
     # Valori di default se il filtro è disattivato
-    range_gradi = ('3', '9A')
+    range_gradi = (GRADES[min_grade], GRADES[max_grade])
     boulder_tags = []
 
 # --- LOGICA DI FILTRAGGIO AVANZATA ---
-mask = (boulder_data['settore'] == selected_sector)
+mask = pd.Series([True] * len(boulder_data))  # Inizialmente tutti i blocchi sono selezionati
+if selected_sector != "Tutti":
+    mask = (boulder_data['settore'] == selected_sector)
 
 if filtraggio:
     # Filtro Grado (confronto stringhe basato sull'ordine nella lista GRADES)
-    idx_min = GRADES.index(range_gradi[0])
-    idx_max = GRADES.index(range_gradi[1])
-    # Questa logica di confronto stringhe >= <= è fragile se GRADES non è ordinato perfettamente.
-    # Funziona solo se il CSV usa ESATTAMENTE le stesse stringhe di GRADES.
-    mask &= boulder_data['grado'].apply(lambda x: x in GRADES and idx_min <= GRADES.index(x) <= idx_max)
+    idx_min = grade_to_int[range_gradi[0]]
+    idx_max = grade_to_int[range_gradi[1]]
+    mask &= boulder_data['grade_rank'].between(idx_min, idx_max)
 
     # Filtro Tag (mostra il blocco se ha ALMENO UNO dei tag selezionati)
     if boulder_tags:
