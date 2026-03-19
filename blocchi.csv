@@ -1,6 +1,4 @@
-nome,grado,settore,lat,lon,immagine,topos,descrizione,tag,fa
-Psychocandy,6B,Psychocandy,42.709722,12.071139,pagina_1_foto_1.png,pagina_linee1.png
-Psychocandy,6B,Psychocandy,42.709722,12.071139,pagina_1_foto_1.png,pagina_linee2.png
-Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
-Sassozzo,7A,Laghetto,,,sasso.jpg
-Pietra,6B,Cava,,,placca.jpg
+nome,sasso,numero,grado,settore,lat,lon,immagine,topos,descrizione,tag,fa
+Psychocandy,,,6B,Psychocandy,42.709722,12.071439,placca.jpg
+Sassozzo,,,7A,Laghetto,,,sasso.jpg
+Pietra,,,6B,Cava,,,placca.jpg

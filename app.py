@@ -4,23 +4,33 @@ import pydeck as pdk
 from PIL import Image # Nuova importazione per gestire le immagini
 import os # Utile per verificare se il file esiste
 
-st.title("Sugano Boulder")
-st.header("Mappa dei settori")
-
-# --- CARICAMENTO DATI ---
-# Assicurati che il CSV abbia le colonne 'lat' e 'lon'
-# Gestione errore se il file non esiste
-try:
-    parcheggi = pd.read_csv("parcheggi.csv")
-except FileNotFoundError:
-    st.error("File 'parcheggi.csv' non trovato.")
-    st.stop()
-
-# --- CONFIGURAZIONE ICONE E MAPPA ---
-ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png"
+ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png" #cambia ad icona locale
 IMAGE_PATH = "img/" # Cartella dove tieni le foto E i topos PNG
 TOPO_PATH = "topos/" # Cartella dove tieni i topos PNG
 GRADES = ['3', '4', '5A', '5B', '5C', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A']
+PALETTE = [
+    [0, 255, 0, 160],
+    [255, 0, 0, 160],
+    [0, 0, 255, 160],
+    [255, 255, 0, 160],
+    [255, 0, 255, 160],
+    [0, 255, 255, 160],
+    [255, 128, 0, 160],
+]
+
+st.title("Sugano Boulder")
+
+col1, col2 = st.columns(2)
+with col1:
+    show_parks = st.checkbox("Mostra parcheggi", value=True)
+with col2:
+    show_blocks = st.checkbox("Mostra blocchi", value=True)
+
+parcheggi = pd.read_csv("parcheggi.csv")
+boulder_data = pd.read_csv("blocchi.csv")
+settori = boulder_data["settore"].unique()
+
+boulder_data['color'] = boulder_data['settore'].map({settore: color for i, (settore, color) in enumerate(zip(settori, PALETTE))})
 
 icon_data = {
     "url": ICON_URL,
@@ -38,9 +48,17 @@ icon_layer = pdk.Layer(
     data=parcheggi,
     get_icon="icon_data",
     get_size=4,
-    size_scale=10,
+    size_scale=5,
     get_position=["lon", "lat"],
-    pickable=True,
+    pickable=True, #Aggiungi link maps on click
+)
+
+block_layer = pdk.Layer(
+    type="ScatterplotLayer",
+    data=boulder_data,
+    get_radius=10,
+    get_fill_color="color",
+    get_position=["lon", "lat"],
 )
 
 # Vista iniziale della mappa
@@ -48,41 +66,27 @@ if not parcheggi.empty:
     view_state = pdk.ViewState(
         latitude=parcheggi["lat"].mean(),
         longitude=parcheggi["lon"].mean(),
-        zoom=14,
+        zoom=15,
         pitch=0,
     )
 else:
     view_state = pdk.ViewState(latitude=0, longitude=0, zoom=1)
 
+layer_list = []
+if show_parks:
+    layer_list.append(icon_layer)
+if show_blocks:
+    layer_list.append(block_layer)
+
 # Rendering della mappa
 st.pydeck_chart(pdk.Deck(
-    layers=[icon_layer],
+    layers=layer_list,
     initial_view_state=view_state,
 ))
 
-# --- DOWNLOAD PDF ---
-try:
-    with open("guida_sugano_boulder.pdf", "rb") as pdf_file:
-        PDFbyte = pdf_file.read()
-
-    st.download_button(
-        label="📄 Scarica la Guida Boulder (PDF)",
-        data=PDFbyte,
-        file_name="Guida_Sugano_Boulder.pdf",
-        mime="application/pdf"
-    )
-except FileNotFoundError:
-    st.warning("File PDF della guida non trovato.")
 
 # --- SEZIONE TOPOS E FILTRI ---
 st.header("Topos")
-
-# Caricamento dati blocchi
-try:
-    boulder_data = pd.read_csv("blocchi.csv")
-except FileNotFoundError:
-    st.error("File 'blocchi.csv' non trovato.")
-    st.stop()
 
 # Interfaccia filtri
 col1, col2 = st.columns([1, 3]) # Organizziamo i filtri su due colonne
@@ -106,7 +110,6 @@ else:
     boulder_tags = []
 
 # Selezione Settore
-settori = boulder_data["settore"].unique()
 selected_sector = st.selectbox("Scegli un settore", options=settori)
 
 st.subheader(f"Lista dei blocchi - {selected_sector}")
@@ -141,35 +144,7 @@ else:
             
             # 1. Recupero foto base (stringa sicura)
             img_foto_path = os.path.join(IMAGE_PATH, str(row['immagine']))
-            
-            # 2. Inizializziamo il topos come None
-            img_topos_path = None
-            
-            # Verifichiamo se 'topos' è una stringa valida (e non un NaN/float)
-            if isinstance(row['topos'], str) and row['topos'].strip() != "":
-                img_topos_path = os.path.join(TOPO_PATH, row['topos'])
 
-            try:
-                # Apri la foto originale
-                fondo = Image.open(img_foto_path).convert("RGBA")
-
-                # Se abbiamo un percorso topos valido E il file esiste sul disco
-                if img_topos_path and os.path.exists(img_topos_path):
-                    linee = Image.open(img_topos_path).convert("RGBA")
-                    
-                    if fondo.size == linee.size:
-                        risultato = Image.alpha_composite(fondo, linee)
-                        st.image(risultato, use_container_width=True)
-                    else:
-                        st.warning(f"Dimensioni diverse per {row['nome']}. Mostro solo foto base.")
-                        st.image(fondo, use_container_width=True)
-                else:
-                    # Se il topos non è previsto o il file manca, mostra solo la foto
-                    st.image(fondo, use_container_width=True)
-
-            except FileNotFoundError:
-                st.error(f"Immagine non trovata per '{row['nome']}'")
-            except Exception as e:
-                st.error(f"Errore su {row['nome']}: {e}")
+            st.image(img_foto_path)
             
             st.markdown("---")
