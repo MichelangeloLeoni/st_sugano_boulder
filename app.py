@@ -22,6 +22,11 @@ df = load_data()
 # ----------------------
 st.sidebar.header("Filtri")
 
+# Istogramma gradi
+st.sidebar.subheader("Distribuzione gradi")
+grado_counts = df["grado"].value_counts().sort_index()
+st.sidebar.bar_chart(grado_counts)
+
 gradi = sorted(df["grado"].unique())
 grado_sel = st.sidebar.selectbox("Seleziona grado", gradi)
 
