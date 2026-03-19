@@ -1,144 +1,79 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-from PIL import Image
 
-st.set_page_config(layout="wide")
+st.title("Sugano Boulder")
+st.header("Mappa dei settori")
 
-st.title("🧗‍♂️ Guida Boulder Interattiva")
+# Caricamento dati
+# Assicurati che il CSV abbia le colonne 'lat' e 'lon'
+parcheggi = pd.read_csv("parcheggi.csv")
 
-# ----------------------
-# CARICAMENTO DATI
-# ----------------------
-@st.cache_data
-def load_data():
-    df = pd.read_csv("blocchi.csv")
-    return df
+# Definiamo l'icona (puoi usare un URL di un'immagine PNG)
+# Ecco un esempio di icona standard per il parcheggio
+ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png"
+IMAGE_PATH = "img/"
+GRADES = ['3', '4', '5A', '5B', '5C', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A']
 
-df = load_data()
+icon_data = {
+    "url": ICON_URL,
+    "width": 128,
+    "height": 128,
+    "anchorY": 128,
+}
 
-# ----------------------
-# GESTIONE GRADI (ordine)
-# ----------------------
-grado_order = [
-    "5A", "5B", "5C",
-    "6A", "6A+",
-    "6B", "6B+",
-    "6C", "6C+",
-    "7A", "7A+",
-    "7B", "7B+",
-    "7C", "7C+",
-    "8A"
-]
+# Aggiungiamo la colonna "icon_data" al dataframe dei parcheggi
+parcheggi["icon_data"] = [icon_data for _ in range(len(parcheggi))]
 
-grado_to_num = {g: i for i, g in enumerate(grado_order)}
-num_to_grado = {i: g for g, i in grado_to_num.items()}
-
-# mappa i gradi nel dataframe
-df = df[df["grado"].isin(grado_order)].copy()
-df["grado_num"] = df["grado"].map(grado_to_num)
-
-# ----------------------
-# SIDEBAR - FILTRI
-# ----------------------
-st.sidebar.header("🎯 Filtri")
-
-min_val = int(df["grado_num"].min())
-max_val = int(df["grado_num"].max())
-
-range_sel = st.sidebar.slider(
-    "Seleziona range gradi",
-    min_val,
-    max_val,
-    (min_val, max_val)
+# Configurazione del layer delle icone
+icon_layer = pdk.Layer(
+    type="IconLayer",
+    data=parcheggi,
+    get_icon="icon_data",
+    get_size=4,
+    size_scale=10,
+    get_position=["lon", "lat"],
+    pickable=True,
 )
 
-# mostra range leggibile
-st.sidebar.write(
-    f"Da **{num_to_grado[range_sel[0]]}** a **{num_to_grado[range_sel[1]]}**"
+# Vista iniziale della mappa
+view_state = pdk.ViewState(
+    latitude=parcheggi["lat"].mean(),
+    longitude=parcheggi["lon"].mean(),
+    zoom=14,
+    pitch=0,
 )
 
-# filtro
-filtered = df[
-    (df["grado_num"] >= range_sel[0]) &
-    (df["grado_num"] <= range_sel[1])
-]
+# Rendering della mappa
+st.pydeck_chart(pdk.Deck(
+    layers=[icon_layer],
+    initial_view_state=view_state,
+))
 
-# ----------------------
-# LAYOUT
-# ----------------------
-col1, col2 = st.columns([1, 1])
+st.header("Topos")
 
-# ----------------------
-# MAPPA
-# ----------------------
-with col1:
-    st.subheader("📍 Mappa blocchi")
+filtraggio = st.checkbox("Abilita filtri")
+if filtraggio:
+    range_gradi = st.select_slider(
+        "Seleziona difficoltà",
+        options=GRADES,
+        value=('3', '9A') # Range di default
+    )
+    boulder_tags = st.multiselect(
+        "Seleziona tag",
+        options=['sosta', 'strapiombo', 'tetto', 'placca', 'fessura', 'liscio', 'appigli piccoli', 'appigli grandi']
+    )
 
-    if not filtered.empty:
+boulder_data = pd.read_csv("blocchi.csv")
+settori = boulder_data["settore"].unique()
+selected_sector = st.selectbox("Scegli un settore", options=settori)
 
-        # colore per settore (semplice hash)
-        filtered["color"] = filtered["settore"].apply(
-            lambda x: [hash(x) % 255, 100, 200]
-        )
+st.subheader("Lista dei blocchi")
 
-        layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=filtered,
-            get_position='[lon, lat]',
-            get_color='color',
-            get_radius=40,
-            pickable=True
-        )
+blocchi_filtrati = (boulder_data['settore'] == selected_sector )
+if filtraggio:
+    blocchi_filtrati &= (boulder_data['grado'] >= range_gradi[0]) & (boulder_data['grado'] <= range_gradi[1])
 
-        view_state = pdk.ViewState(
-            latitude=filtered["lat"].mean(),
-            longitude=filtered["lon"].mean(),
-            zoom=15
-        )
-
-        st.pydeck_chart(pdk.Deck(
-            layers=[layer],
-            initial_view_state=view_state,
-            tooltip={"text": "{nome} ({grado}) - {settore}"}
-        ))
-
-    else:
-        st.warning("Nessun blocco nel range selezionato")
-
-# ----------------------
-# DETTAGLIO BLOCCO
-# ----------------------
-with col2:
-    st.subheader("🪨 Dettaglio blocco")
-
-    if not filtered.empty:
-
-        blocco_nome = st.selectbox("Scegli blocco", filtered["nome"])
-
-        b = filtered[filtered["nome"] == blocco_nome].iloc[0]
-
-        # ----------------------
-        # IMMAGINE CON OVERLAY
-        # ----------------------
-        try:
-            base = Image.open(b["immagine"]).convert("RGBA")
-            overlay = Image.open(b["topo"]).convert("RGBA")
-
-            base.paste(overlay, (0, 0), overlay)
-
-            st.image(base, caption=blocco_nome)
-
-        except Exception as e:
-            st.image(b["immagine"], caption=blocco_nome)
-            st.warning("Topo non disponibile")
-
-        # ----------------------
-        # INFO BLOCCO
-        # ----------------------
-        st.markdown(f"**Grado:** {b['grado']}")
-        st.markdown(f"**Settore:** {b['settore']}")
-        st.write(b["descrizione"])
-
-    else:
-        st.info("Seleziona un range di gradi")
+for index, row in boulder_data[blocchi_filtrati].iterrows():
+    st.markdown(f"**{row['nome']}** - {row['grado']} - {row['tag']}")
+    st.image(f"{IMAGE_PATH}{row['immagine']}")

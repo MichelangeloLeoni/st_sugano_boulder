@@ -1,3 +1,22 @@
-nome,grado,settore,lat,lon,immagine,topo,descrizione
-Sasso Magico,6B,Sugano,43.88,11.10,img/sasso.jpg,topo/sasso.png,Partenza seduta dinamica verso sinistra
-Placca Liscia,6A,Sugano,43.881,11.101,img/placca.jpg,topo/placca.png,Equilibrio tecnico su piedi piccoli
+nome,grado,settore,lat,lon,immagine,topo,descrizione,tag,fa
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Psychocandy,6B,Psychocandy,42.709722,12.071139,placca.jpg
+Sassozzo,7A,Laghetto,,,sasso.jpg
+Pietra,6B,Cava,,,placca.jpg
