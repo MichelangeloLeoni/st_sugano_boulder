@@ -22,10 +22,6 @@ df = load_data()
 # ----------------------
 st.sidebar.header("Filtri")
 
-# Istogramma gradi
-st.sidebar.subheader("Distribuzione gradi")
-grado_counts = df["grado"].value_counts().sort_index()
-st.sidebar.bar_chart(grado_counts)
 
 gradi = sorted(df["grado"].unique())
 grado_sel = st.sidebar.selectbox("Seleziona grado", gradi)
@@ -35,11 +31,18 @@ filtered = df[df["grado"] == grado_sel]
 # ----------------------
 # LAYOUT
 # ----------------------
+
+# Istogramma gradi
+st.sidebar.subheader("Distribuzione gradi")
+grado_counts = df["grado"].value_counts().sort_index()
+st.sidebar.bar_chart(grado_counts)
+
 col1, col2 = st.columns([1, 1])
 
 # ----------------------
 # MAPPA
 # ----------------------
+
 with col1:
     st.subheader("📍 Mappa blocchi")
 
