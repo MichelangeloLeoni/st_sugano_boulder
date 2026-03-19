@@ -6,6 +6,7 @@ from PIL import Image
 st.set_page_config(layout="wide")
 
 st.title("🧗‍♂️ Guida Boulder Interattiva")
+st.write("Venite a fare sassi a Sugano!!!")
 
 # ----------------------
 # CARICAMENTO DATI
