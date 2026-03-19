@@ -59,6 +59,7 @@ block_layer = pdk.Layer(
     get_radius=10,
     get_fill_color="color",
     get_position=["lon", "lat"],
+    pickable=True,
 )
 
 # Vista iniziale della mappa
@@ -79,19 +80,25 @@ if show_blocks:
     layer_list.append(block_layer)
 
 # Rendering della mappa
-st.pydeck_chart(pdk.Deck(
+deck = pdk.Deck(
     layers=layer_list,
     initial_view_state=view_state,
-))
+    tooltip={
+        "html": "<b>{sasso}</b><br>Settore: {settore}<br>",
+        "style": {"color": "white"}
+    }
+)
 
+st.pydeck_chart(deck)
 
-# --- SEZIONE TOPOS E FILTRI ---
-st.header("Topos")
+# Selezione Settore
+st.header(f"Lista dei blocchi")
+selected_sector = st.selectbox("Scegli un settore", options=settori)
 
 # Interfaccia filtri
-col1, col2 = st.columns([1, 3]) # Organizziamo i filtri su due colonne
+col1, col2 = st.columns([2, 3]) # Organizziamo i filtri su due colonne
 with col1:
-    filtraggio = st.checkbox("Abilita filtri di difficoltà/tag")
+    filtraggio = st.checkbox("Filtra")
 
 if filtraggio:
     with col2:
@@ -108,11 +115,6 @@ else:
     # Valori di default se il filtro è disattivato
     range_gradi = ('3', '9A')
     boulder_tags = []
-
-# Selezione Settore
-selected_sector = st.selectbox("Scegli un settore", options=settori)
-
-st.subheader(f"Lista dei blocchi - {selected_sector}")
 
 # --- LOGICA DI FILTRAGGIO AVANZATA ---
 mask = (boulder_data['settore'] == selected_sector)
