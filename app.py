@@ -50,6 +50,18 @@ st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
 ))
 
+# Leggiamo il file PDF
+with open("guida_sugano_boulder.pdf", "rb") as pdf_file:
+    PDFbyte = pdf_file.read()
+
+# Creiamo il bottone
+st.download_button(
+    label="📄 Scarica la Guida Boulder (PDF)",
+    data=PDFbyte,
+    file_name="Guida_Sugano_Boulder.pdf",
+    mime="application/pdf"
+)
+
 st.header("Topos")
 
 filtraggio = st.checkbox("Abilita filtri")
