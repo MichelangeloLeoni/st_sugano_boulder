@@ -1,18 +1,25 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
+from PIL import Image # Nuova importazione per gestire le immagini
+import os # Utile per verificare se il file esiste
 
 st.title("Sugano Boulder")
 st.header("Mappa dei settori")
 
-# Caricamento dati
+# --- CARICAMENTO DATI ---
 # Assicurati che il CSV abbia le colonne 'lat' e 'lon'
-parcheggi = pd.read_csv("parcheggi.csv")
+# Gestione errore se il file non esiste
+try:
+    parcheggi = pd.read_csv("parcheggi.csv")
+except FileNotFoundError:
+    st.error("File 'parcheggi.csv' non trovato.")
+    st.stop()
 
-# Definiamo l'icona (puoi usare un URL di un'immagine PNG)
-# Ecco un esempio di icona standard per il parcheggio
+# --- CONFIGURAZIONE ICONE E MAPPA ---
 ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png"
-IMAGE_PATH = "img/"
+IMAGE_PATH = "img/" # Cartella dove tieni le foto E i topos PNG
+TOPO_PATH = "topos/" # Cartella dove tieni i topos PNG
 GRADES = ['3', '4', '5A', '5B', '5C', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A']
 
 icon_data = {
@@ -22,7 +29,7 @@ icon_data = {
     "anchorY": 128,
 }
 
-# Aggiungiamo la colonna "icon_data" al dataframe dei parcheggi
+# Aggiungiamo la colonna "icon_data"
 parcheggi["icon_data"] = [icon_data for _ in range(len(parcheggi))]
 
 # Configurazione del layer delle icone
@@ -37,12 +44,15 @@ icon_layer = pdk.Layer(
 )
 
 # Vista iniziale della mappa
-view_state = pdk.ViewState(
-    latitude=parcheggi["lat"].mean(),
-    longitude=parcheggi["lon"].mean(),
-    zoom=14,
-    pitch=0,
-)
+if not parcheggi.empty:
+    view_state = pdk.ViewState(
+        latitude=parcheggi["lat"].mean(),
+        longitude=parcheggi["lon"].mean(),
+        zoom=14,
+        pitch=0,
+    )
+else:
+    view_state = pdk.ViewState(latitude=0, longitude=0, zoom=1)
 
 # Rendering della mappa
 st.pydeck_chart(pdk.Deck(
@@ -50,42 +60,116 @@ st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
 ))
 
-# Leggiamo il file PDF
-with open("guida_sugano_boulder.pdf", "rb") as pdf_file:
-    PDFbyte = pdf_file.read()
+# --- DOWNLOAD PDF ---
+try:
+    with open("guida_sugano_boulder.pdf", "rb") as pdf_file:
+        PDFbyte = pdf_file.read()
 
-# Creiamo il bottone
-st.download_button(
-    label="📄 Scarica la Guida Boulder (PDF)",
-    data=PDFbyte,
-    file_name="Guida_Sugano_Boulder.pdf",
-    mime="application/pdf"
-)
+    st.download_button(
+        label="📄 Scarica la Guida Boulder (PDF)",
+        data=PDFbyte,
+        file_name="Guida_Sugano_Boulder.pdf",
+        mime="application/pdf"
+    )
+except FileNotFoundError:
+    st.warning("File PDF della guida non trovato.")
 
+# --- SEZIONE TOPOS E FILTRI ---
 st.header("Topos")
 
-filtraggio = st.checkbox("Abilita filtri")
-if filtraggio:
-    range_gradi = st.select_slider(
-        "Seleziona difficoltà",
-        options=GRADES,
-        value=('3', '9A') # Range di default
-    )
-    boulder_tags = st.multiselect(
-        "Seleziona tag",
-        options=['sosta', 'strapiombo', 'tetto', 'placca', 'fessura', 'liscio', 'appigli piccoli', 'appigli grandi']
-    )
+# Caricamento dati blocchi
+try:
+    boulder_data = pd.read_csv("blocchi.csv")
+except FileNotFoundError:
+    st.error("File 'blocchi.csv' non trovato.")
+    st.stop()
 
-boulder_data = pd.read_csv("blocchi.csv")
+# Interfaccia filtri
+col1, col2 = st.columns([1, 3]) # Organizziamo i filtri su due colonne
+with col1:
+    filtraggio = st.checkbox("Abilita filtri di difficoltà/tag")
+
+if filtraggio:
+    with col2:
+        range_gradi = st.select_slider(
+            "Seleziona range difficoltà",
+            options=GRADES,
+            value=('3', '9A')
+        )
+        boulder_tags = st.multiselect(
+            "Seleziona tag",
+            options=['sosta', 'strapiombo', 'tetto', 'placca', 'fessura', 'liscio', 'appigli piccoli', 'appigli grandi']
+        )
+else:
+    # Valori di default se il filtro è disattivato
+    range_gradi = ('3', '9A')
+    boulder_tags = []
+
+# Selezione Settore
 settori = boulder_data["settore"].unique()
 selected_sector = st.selectbox("Scegli un settore", options=settori)
 
-st.subheader("Lista dei blocchi")
+st.subheader(f"Lista dei blocchi - {selected_sector}")
 
-blocchi_filtrati = (boulder_data['settore'] == selected_sector )
+# --- LOGICA DI FILTRAGGIO AVANZATA ---
+mask = (boulder_data['settore'] == selected_sector)
+
 if filtraggio:
-    blocchi_filtrati &= (boulder_data['grado'] >= range_gradi[0]) & (boulder_data['grado'] <= range_gradi[1])
+    # Filtro Grado (confronto stringhe basato sull'ordine nella lista GRADES)
+    idx_min = GRADES.index(range_gradi[0])
+    idx_max = GRADES.index(range_gradi[1])
+    # Questa logica di confronto stringhe >= <= è fragile se GRADES non è ordinato perfettamente.
+    # Funziona solo se il CSV usa ESATTAMENTE le stesse stringhe di GRADES.
+    mask &= boulder_data['grado'].apply(lambda x: x in GRADES and idx_min <= GRADES.index(x) <= idx_max)
 
-for index, row in boulder_data[blocchi_filtrati].iterrows():
-    st.markdown(f"**{row['nome']}** - {row['grado']} - {row['tag']}")
-    st.image(f"{IMAGE_PATH}{row['immagine']}")
+    # Filtro Tag (mostra il blocco se ha ALMENO UNO dei tag selezionati)
+    if boulder_tags:
+        # Assumiamo che nel CSV i tag siano separati da virgola, es: "placca,liscio"
+        mask &= boulder_data['tag'].apply(lambda x: any(tag in str(x).split(',') for tag in boulder_tags))
+
+
+# --- VISUALIZZAZIONE BLOCCHI CON SOVRAPPOSIZIONE TOPOS ---
+blocchi_da_mostrare = boulder_data[mask]
+
+if blocchi_da_mostrare.empty:
+    st.info("Nessun blocco corrisponde ai filtri selezionati in questo settore.")
+else:
+    for index, row in blocchi_da_mostrare.iterrows():
+        with st.container():
+            st.markdown(f"### {row['nome']}")
+            st.markdown(f"**Grado:** {row['grado']} | **Tag:** {row['tag']}")
+            
+            # 1. Recupero foto base (stringa sicura)
+            img_foto_path = os.path.join(IMAGE_PATH, str(row['immagine']))
+            
+            # 2. Inizializziamo il topos come None
+            img_topos_path = None
+            
+            # Verifichiamo se 'topos' è una stringa valida (e non un NaN/float)
+            if isinstance(row['topos'], str) and row['topos'].strip() != "":
+                img_topos_path = os.path.join(TOPO_PATH, row['topos'])
+
+            try:
+                # Apri la foto originale
+                fondo = Image.open(img_foto_path).convert("RGBA")
+
+                # Se abbiamo un percorso topos valido E il file esiste sul disco
+                if img_topos_path and os.path.exists(img_topos_path):
+                    linee = Image.open(img_topos_path).convert("RGBA")
+                    
+                    if fondo.size == linee.size:
+                        risultato = Image.alpha_composite(fondo, linee)
+                        st.image(risultato, use_container_width=True)
+                    else:
+                        st.warning(f"Dimensioni diverse per {row['nome']}. Mostro solo foto base.")
+                        st.image(fondo, use_container_width=True)
+                else:
+                    # Se il topos non è previsto o il file manca, mostra solo la foto
+                    st.image(fondo, use_container_width=True)
+
+            except FileNotFoundError:
+                st.error(f"Immagine non trovata per '{row['nome']}'")
+            except Exception as e:
+                st.error(f"Errore su {row['nome']}: {e}")
+            
+            st.markdown("---")
