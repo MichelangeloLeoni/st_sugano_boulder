@@ -55,6 +55,7 @@ def render_map(parcheggi, boulder_data):
     deck = pdk.Deck(
         layers=layers,
         initial_view_state=view_state,
+        parameters={"scrollZoom": False},
         tooltip={
             "html": "<b>Sasso:</b> {sasso}<br/>"
                     "<b>Settore:</b> {settore}<br/>"
