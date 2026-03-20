@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 from render_map import render_map
-from render_blocks import render_block_list
+from render_blocks import render_block_list, GRADES
 
 # --- CONFIGURAZIONE E COSTANTI ---
 DATA_PATH = "data/"
