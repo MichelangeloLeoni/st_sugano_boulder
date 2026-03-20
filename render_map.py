@@ -7,9 +7,9 @@ ICON_URL = "https://img.icons8.com/color/48/000000/parking--v1.png"
 def render_map(parcheggi, boulder_data):
     col1, col2 = st.columns(2)
     with col1:
-        show_parks = st.checkbox("Mostra parcheggi", value=True)
+        show_parks = st.toggle("Parcheggi", value=True)
     with col2:
-        show_blocks = st.checkbox("Mostra blocchi", value=True)
+        show_blocks = st.toggle("Blocchi", value=True)
 
     vie_per_sasso = boulder_data.groupby('sasso')['nome'].count().reset_index(name='num_vie')
     
