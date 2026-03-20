@@ -11,6 +11,12 @@ def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
     st.subheader(f"Lista dei blocchi")
     selected_sector = st.selectbox("Scegli un settore", options=settori, index=0)
 
+    if st.checkbox("Mostra statistiche per nerd"):
+        if selected_sector == "Tutti":
+            st.bar_chart(boulder_data['grado'].value_counts().sort_index())
+        else:
+            st.bar_chart(boulder_data[boulder_data['settore'] == selected_sector]['grado'].value_counts().sort_index())
+
     col1, col2 = st.columns([2, 3])
     with col1:
         filtraggio = st.checkbox("Attiva filtri avanzati")
