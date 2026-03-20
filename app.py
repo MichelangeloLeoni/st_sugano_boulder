@@ -29,7 +29,7 @@ def load_data():
 
 parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade, tags = load_data()
 
-st.set_page_config(page_title="Sugano Boulder", page_icon="🧗‍♂️")
+st.set_page_config(page_title="Sugano Boulder", page_icon="img/ssm.png")
 
 st.subheader("Sugano Boulder")
 
