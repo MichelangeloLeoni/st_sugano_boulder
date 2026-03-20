@@ -1,12 +1,13 @@
 import streamlit as st
 import pandas as pd
 import os
+from PIL import Image, ImageOps
 
 GRADES = ['3', '4', '5A', '5B', '5C', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A', '8A+', '8B', '8B+', '8C', '8C+', '9A']
 IMAGE_PATH = "img/"
 
 @st.fragment
-def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade):
+def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade, tags):
 
     st.subheader(f"Lista dei blocchi")
     selected_sector = st.selectbox("Scegli un settore", options=settori, index=0)
@@ -30,7 +31,7 @@ def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
             )
             boulder_tags = st.multiselect(
                 "Seleziona tag",
-                options=['tacche', 'svase']
+                options=tags,
             )
     else:
         range_gradi = (GRADES[min_grade], GRADES[max_grade])
@@ -76,7 +77,9 @@ def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
                 if pd.notna(img_name):
                     if pd.notna(faccia):
                         st.write(f"Faccia: {int(faccia)}")
-                    st.image(os.path.join(IMAGE_PATH, img_name))
+                    image = Image.open(os.path.join(IMAGE_PATH, img_name))
+                    image = ImageOps.exif_transpose(image) 
+                    st.image(image, width="content")
                     
                     for _, blocco in vie_faccia.iterrows():
                         with st.expander(f'**{blocco["numero"]}** - {blocco["nome"]} - {blocco["grado"]} - {blocco['partenza']}'):

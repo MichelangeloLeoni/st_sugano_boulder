@@ -44,7 +44,7 @@ def render_map(parcheggi, boulder_data):
     view_state = pdk.ViewState(
         latitude=(p_mean["lat"] + b_mean["lat"]) / 2,
         longitude=(p_mean["lon"] + b_mean["lon"]) / 2,
-        zoom=15,
+        zoom=14.5,
         pitch=0,
     )
 

@@ -24,12 +24,15 @@ def load_data():
     blocks['grade_rank'] = blocks['grado'].map(grade_to_int)
     min_grade = blocks['grade_rank'].min()
     max_grade = blocks['grade_rank'].max()
-    return parks, blocks, settori_list, grade_to_int, min_grade, max_grade
+    tags = sorted(set(tag for sublist in blocks['tag'].dropna().apply(lambda x: str(x).split(',')).tolist() for tag in sublist))
+    return parks, blocks, settori_list, grade_to_int, min_grade, max_grade, tags
 
-parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade = load_data()
+parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade, tags = load_data()
+
+st.set_page_config(page_title="Sugano Boulder", page_icon="🧗‍♂️")
 
 st.subheader("Sugano Boulder")
 
 render_map(parcheggi=parcheggi, boulder_data=boulder_data)
 
-render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
+render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade, tags)

@@ -1,5 +1,6 @@
-lat,lon,settore,sasso,faccia,nome,numero,grado,partenza,fa,immagine,topos,descrizione,pericolosita,tag
-42.709722,12.071439,Cascata,Psychocandy,1,My Little Underground,1,6B+,sit,M.Leoni,placca.jpg
-42.709722,12.071439,Cascata,Psychocandy,2,Never Understand,2,7A,sit,M.Leoni,sasso.jpg
-42.706722,12.071239,Cascata,Culata,,Culata,1,5C,stand,M.Leoni,placca.jpg
-42.711647,12.068711,Laghetto,Party,,Casper,1,7B,stand,M.Leoni,sasso.jpg
+lat,lon,settore,sasso,faccia,nome,numero,grado,partenza,fa,immagine,topos,descrizione,tag
+42.713,12.059916666666668,Achille,Tallone d'Achille,,proj 1,1,7C,sit,,achille.jpg,,,
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Non devi cascà,1,4,stand,,usa_i_piedi_bot_1.jpg,,,
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Usa i piedi Bot,2,5C,stand,,usa_i_piedi_bot_1.jpg,,,eliminanti
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,2,Bordo scala,3,4,stand,,usa_i_piedi_bot_2.jpg,,,
+42.7098502,12.0711033,Cascata,Psychocandy,1,Never Understand,1,7A,sit,,psychocandy_1.jpg,
