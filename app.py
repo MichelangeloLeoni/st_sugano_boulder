@@ -17,8 +17,8 @@ def load_data():
     parks = pd.read_csv(DATA_PATH + "parcheggi.csv")
     blocks = pd.read_csv(DATA_PATH + "blocchi.csv")
     settori_list = sorted(blocks["settore"].unique())
-    settori_list = ["Tutti"] + settori_list
     color_map = {s: PALETTE[i % len(PALETTE)] for i, s in enumerate(settori_list)}
+    settori_list = ["Tutti"] + settori_list
     blocks['color'] = blocks['settore'].map(color_map)
     grade_to_int = {grade: i for i, grade in enumerate(GRADES)}
     blocks['grade_rank'] = blocks['grado'].map(grade_to_int)

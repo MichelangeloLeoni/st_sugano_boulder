@@ -38,7 +38,7 @@ def render_map(parcheggi, boulder_data):
         "ScatterplotLayer",
         data=unique_boulders, # Usiamo i dati filtrati senza duplicati
         get_radius=12,
-        get_fill_color=[255, 75, 75, 200], # Rosso acceso semi-trasparente
+        get_fill_color="color", # Rosso acceso semi-trasparente
         get_position=["lon", "lat"],
         pickable=True,
     )
