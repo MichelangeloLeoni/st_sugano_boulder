@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import os
 
 from render_map import render_map
 from render_blocks import render_block_list, GRADES
@@ -17,21 +16,19 @@ PALETTE = [
 def load_data():
     parks = pd.read_csv(DATA_PATH + "parcheggi.csv")
     blocks = pd.read_csv(DATA_PATH + "blocchi.csv")
-    # Assegnazione colori ai settori
     settori_list = sorted(blocks["settore"].unique())
-    settori_list = ["Tutti"] + settori_list # Aggiungiamo "Tutti" come prima opzione
+    settori_list = ["Tutti"] + settori_list
     color_map = {s: PALETTE[i % len(PALETTE)] for i, s in enumerate(settori_list)}
     blocks['color'] = blocks['settore'].map(color_map)
     grade_to_int = {grade: i for i, grade in enumerate(GRADES)}
     blocks['grade_rank'] = blocks['grado'].map(grade_to_int)
-    # Calco il grado minimo e massimo assoluto per i blocchi, così da poter impostare i valori di default dello slider
     min_grade = blocks['grade_rank'].min()
     max_grade = blocks['grade_rank'].max()
     return parks, blocks, settori_list, grade_to_int, min_grade, max_grade
 
 parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade = load_data()
 
-st.title("Sugano Boulder")
+st.header("Sugano Boulder")
 
 render_map(parcheggi=parcheggi, boulder_data=boulder_data)
 

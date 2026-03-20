@@ -1,4 +1,3 @@
-nome,sasso,numero,grado,settore,lat,lon,immagine,topos,descrizione,tag,fa
-Psychocandy,,,6B,Psychocandy,42.709722,12.071439,placca.jpg
-Sassozzo,,,7A,Laghetto,,,sasso.jpg
-Pietra,,,6B,Cava,,,placca.jpg
+lat,lon,settore,sasso,nome,grado,partenza,fa,immagine,topos,descrizione,tag
+42.709722,12.071439,Cascata,Psychocandy,My Little Underground,6B+,sit,M.Leoni,placca.jpg
+42.706722,12.071239,Cascata,Culata,Culata,5C,stand,M.Leoni,sasso.jpg

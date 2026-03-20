@@ -63,6 +63,6 @@ def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
                 # 1. Recupero foto base (stringa sicura)
                 img_foto_path = os.path.join(IMAGE_PATH, str(row['immagine']))
 
-                st.image(img_foto_path)
-                
+                st.image(img_foto_path, use_container_width=True, caption=row['nome'])      
+                          
                 st.markdown("---")

@@ -41,11 +41,14 @@ def render_map(parcheggi, boulder_data):
         pickable=True,
     )
 
+    parks_mean = parcheggi[["lat", "lon"]].mean()
+    boulder_mean = boulder_data[["lat", "lon"]].mean()
+
     # Vista iniziale della mappa
     if not parcheggi.empty:
         view_state = pdk.ViewState(
-            latitude=parcheggi["lat"].mean(),
-            longitude=parcheggi["lon"].mean(),
+            latitude=(parks_mean["lat"] + boulder_mean["lat"]) / 2,
+            longitude=(parks_mean["lon"] + boulder_mean["lon"]) / 2,
             zoom=15,
             pitch=0,
         )
