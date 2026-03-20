@@ -1,3 +1,4 @@
-lat,lon,settore,sasso,nome,grado,partenza,fa,immagine,topos,descrizione,tag
-42.709722,12.071439,Cascata,Psychocandy,My Little Underground,6B+,sit,M.Leoni,placca.jpg
-42.706722,12.071239,Cascata,Culata,Culata,5C,stand,M.Leoni,sasso.jpg
+lat,lon,settore,sasso,nome,numero,grado,partenza,fa,immagine,topos,descrizione,tag
+42.709722,12.071439,Cascata,Psychocandy,My Little Underground,1,6B+,sit,M.Leoni,placca.jpg
+42.709722,12.071439,Cascata,Psychocandy,Never Understand,2,7A,sit,M.Leoni,placca.jpg
+42.706722,12.071239,Cascata,Culata,Culata,1,5C,stand,M.Leoni,sasso.jpg

@@ -55,14 +55,15 @@ def render_block_list(boulder_data, settori, grade_to_int, min_grade, max_grade)
     if blocchi_da_mostrare.empty:
         st.info("Nessun blocco corrisponde ai filtri selezionati in questo settore.")
     else:
-        for index, row in blocchi_da_mostrare.iterrows():
-            with st.container():
-                st.markdown(f"### {row['nome']}")
-                st.markdown(f"**Grado:** {row['grado']} | **Tag:** {row['tag']}")
-                
-                # 1. Recupero foto base (stringa sicura)
-                img_foto_path = os.path.join(IMAGE_PATH, str(row['immagine']))
+        # Mostra con un for tutti i blocchi con immagine e nome delle singole vie
+        sassi = blocchi_da_mostrare['sasso'].unique()
+        for sasso in sassi:
+            blocchi = blocchi_da_mostrare[blocchi_da_mostrare['sasso'] == sasso]
+            
+            st.image(os.path.join(IMAGE_PATH, f"{blocchi.iloc[0]['immagine']}"), width='content')
 
-                st.image(img_foto_path, use_container_width=True, caption=row['nome'])      
-                          
-                st.markdown("---")
+            for _, blocco in blocchi.iterrows():
+                with st.expander(f'{blocco["numero"]} - {blocco["nome"]} - {blocco["grado"]} - {blocco["partenza"]}'):
+                    st.write(f"{blocco['descrizione']}, {blocco['tag']}, {blocco['fa']}")
+        
+            st.divider()
