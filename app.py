@@ -28,7 +28,7 @@ def load_data():
 
 parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade = load_data()
 
-st.header("Sugano Boulder")
+st.subheader("Sugano Boulder")
 
 render_map(parcheggi=parcheggi, boulder_data=boulder_data)
 

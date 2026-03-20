@@ -11,17 +11,12 @@ def render_map(parcheggi, boulder_data):
     with col2:
         show_blocks = st.checkbox("Mostra blocchi", value=True)
 
-    # --- LOGICA UNICITÀ SASSI ---
-    # 1. Contiamo quante vie ci sono per sasso per il tooltip
     vie_per_sasso = boulder_data.groupby('sasso')['nome'].count().reset_index(name='num_vie')
     
-    # 2. Teniamo solo una riga per ogni sasso fisico
     unique_boulders = boulder_data.drop_duplicates(subset=['sasso', 'lat', 'lon']).copy()
     
-    # 3. Uniamo il conteggio al dataframe unico
     unique_boulders = unique_boulders.merge(vie_per_sasso, on='sasso')
 
-    # Configurazione Icone Parcheggi
     icon_data = {"url": ICON_URL, "width": 128, "height": 128, "anchorY": 128}
     parcheggi["icon_data"] = [icon_data for _ in range(len(parcheggi))]
 
@@ -36,14 +31,13 @@ def render_map(parcheggi, boulder_data):
 
     block_layer = pdk.Layer(
         "ScatterplotLayer",
-        data=unique_boulders, # Usiamo i dati filtrati senza duplicati
+        data=unique_boulders,
         get_radius=12,
-        get_fill_color="color", # Rosso acceso semi-trasparente
+        get_fill_color="color",
         get_position=["lon", "lat"],
         pickable=True,
     )
 
-    # Centro mappa
     p_mean = parcheggi[["lat", "lon"]].mean() if not parcheggi.empty else {"lat": 0, "lon": 0}
     b_mean = unique_boulders[["lat", "lon"]].mean() if not unique_boulders.empty else {"lat": 0, "lon": 0}
     
