@@ -34,7 +34,7 @@ st.set_page_config(page_title="Sugano Boulder", page_icon="img/ssm.png")
 st.markdown("""
     <style>
         .block-container {
-            padding-top: 0rem;
+            padding-top: 1rem;
         }
     </style>
 """, unsafe_allow_html=True)
