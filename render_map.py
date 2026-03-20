@@ -44,7 +44,7 @@ def render_map(parcheggi, boulder_data):
     view_state = pdk.ViewState(
         latitude=(p_mean["lat"] + b_mean["lat"]) / 2,
         longitude=(p_mean["lon"] + b_mean["lon"]) / 2,
-        zoom=14.5,
+        zoom=14,
         pitch=0,
     )
 
@@ -55,7 +55,6 @@ def render_map(parcheggi, boulder_data):
     deck = pdk.Deck(
         layers=layers,
         initial_view_state=view_state,
-        parameters={"scrollZoom": False},
         tooltip={
             "html": "<b>Sasso:</b> {sasso}<br/>"
                     "<b>Settore:</b> {settore}<br/>"
@@ -64,4 +63,4 @@ def render_map(parcheggi, boulder_data):
         }
     )
 
-    st.pydeck_chart(deck)
+    st.pydeck_chart(deck, height=300)
