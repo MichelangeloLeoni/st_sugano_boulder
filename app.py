@@ -31,6 +31,14 @@ parcheggi, boulder_data, settori, grade_to_int, min_grade, max_grade, tags = loa
 
 st.set_page_config(page_title="Sugano Boulder", page_icon="img/ssm.png")
 
+st.markdown("""
+    <style>
+        .block-container {
+            padding-top: 0rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 st.subheader("Sugano Boulder")
 
 render_map(parcheggi=parcheggi, boulder_data=boulder_data)
