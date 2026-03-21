@@ -1,37 +1,37 @@
-lat,lon,settore,sasso,faccia,nome,numero,grado,partenza,fa,immagine,topos,descrizione,tag
+lat,lon,settore,sasso,faccia,nome,numero,grado,partenza,fa,immagine,descrizione,tag
 
-42.713,12.059916666666668,Achille,Tallone d'Achille,,proj 1,A,9A,sit,,achille.webp,,,
+42.713,12.059916666666668,Achille,Tallone d'Achille,,proj 1,A,9A,sit,,achille.webp
 
-42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Non devi cascà,A,4,stand,,non_devi_casca_1.webp,,
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Non devi cascà,A,4,stand,,non_devi_casca_1.webp
 
-42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Usa i piedi Bot,B,5C,stand,,non_devi_casca_1.webp,,no bordo destra,eliminanti
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,1,Usa i piedi Bot,B,5C,stand,,non_devi_casca_1.webp,no bordo destra,eliminanti
 
-42.71280555555556,12.05877777777778,Achille,Non devi cascà,2,Bordo scala,C,4,stand,,non_devi_casca_2.webp,,,
+42.71280555555556,12.05877777777778,Achille,Non devi cascà,2,Bordo scala,C,4,stand,,non_devi_casca_2.webp
 
-42.7098502,12.0711033,Mastro Nino,Psychocandy,1,The Hardest Walk,A,4,stand,,psychocandy_1.webp,
+42.7098502,12.0711033,Mastro Nino,Psychocandy,1,The Hardest Walk,A,4,stand,,psychocandy_1.webp
 
-42.7098502,12.0711033,Mastro Nino,Psychocandy,1,My Little Underground,B,6B+,sit,,psychocandy_1.webp,
+42.7098502,12.0711033,Mastro Nino,Psychocandy,1,My Little Underground,B,6B+,sit,,psychocandy_1.webp
 
-42.7098502,12.0711033,Mastro Nino,Psychocandy,1,Never Understand,C,6C+,sit,,psychocandy_1.webp,
+42.7098502,12.0711033,Mastro Nino,Psychocandy,1,Never Understand,C,6C+,sit,,psychocandy_1.webp
 
-42.7098502,12.0711033,Mastro Nino,Psychocandy,2,You Trip Me Up,D,6B,sit,,psychocandy_2.webp,
+42.7098502,12.0711033,Mastro Nino,Psychocandy,2,You Trip Me Up,D,6B,sit,,psychocandy_2.webp
 
-42.7098502,12.0711033,Mastro Nino,Psychocandy,2,Just Like Honey,E,6A,sit,,psychocandy_2.webp,
+42.7098502,12.0711033,Mastro Nino,Psychocandy,2,Just Like Honey,E,6A,sit,,psychocandy_2.webp
 
-42.7098502,12.0711033,Mastro Nino,Millennials,,Millennials,A,6A,sit,,millennials.webp,
+42.7098502,12.0711033,Mastro Nino,Millennials,,Millennials,A,6A,sit,,millennials.webp
 
-42.7098502,12.0711033,Mastro Nino,La Sibodela,,La Sibodela,A,5C,sit,,la_sibodela.webp,,no bordi laterali
+42.7098502,12.0711033,Mastro Nino,La Sibodela,,La Sibodela,A,5C,sit,,la_sibodela.webp,no bordi laterali
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Bricche,A,6A,sit,,what_a_nice_tavolino_1.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Bricche,A,6A,sit,,what_a_nice_tavolino_1.webp
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Billetto,B,6A,sit,,what_a_nice_tavolino_1.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Billetto,B,6A,sit,,what_a_nice_tavolino_1.webp
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Ghezzi,C,9A,sit,,what_a_nice_tavolino_1.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,1,Ghezzi,C,9A,sit,,what_a_nice_tavolino_1.webp
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,?,D,6A,stand,,what_a_nice_tavolino_2.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,?,D,6A,stand,,what_a_nice_tavolino_2.webp
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,Bottazzi,E,7A+,stand,,what_a_nice_tavolino_2.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,Bottazzi,E,7A+,stand,,what_a_nice_tavolino_2.webp
 
-42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,?,F,5C,sit,,what_a_nice_tavolino_2.webp,
+42.7098502,12.0711033,Mastro Nino,What A Nice Tavolino,2,?,F,5C,sit,,what_a_nice_tavolino_2.webp
 
-42.7098502,12.0711033,Mastro Nino,Scivolo,,Scivolo,A,3,stand,,scivolo.webp,,No hands: 5C
+42.7098502,12.0711033,Mastro Nino,Scivolo,,Scivolo,A,3,stand,,scivolo.webp,No hands: 5C
