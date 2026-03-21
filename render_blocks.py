@@ -12,7 +12,6 @@ def load_image_cached(image_path):
     """Carica e cache le immagini per evitare ricaricamenti multipli"""
     try:
         img = Image.open(image_path)
-        img = ImageOps.exif_transpose(img)
         return img
     except Exception as e:
         st.error(f"Errore nel caricamento dell'immagine {image_path}: {e}")
